@@ -6,10 +6,6 @@ source = cv2.VideoCapture(0)
 win_name = 'Camera Preview'
 cv2.namedWindow(win_name, cv2.WINDOW_NORMAL)
 
-# Create a directory to save the dataset
-if not os.path.exists("dataset"):
-    os.makedirs("dataset")
-
 net = cv2.dnn.readNetFromCaffe("deploy.prototxt","res10_300x300_ssd_iter_140000_fp16.caffemodel")
 # Model parameters
 in_width = 300
@@ -22,8 +18,6 @@ while cv2.waitKey(1) != 27:
     has_frame, frame = source.read()
     if not has_frame:
         break
-    """ if count >= 100:
-        break """
     frame = cv2.flip(frame,1)
     frame_height = frame.shape[0]
     frame_width = frame.shape[1]
@@ -33,7 +27,6 @@ while cv2.waitKey(1) != 27:
     # Run a model
     net.setInput(blob)
     detections = net.forward()
-    print(detections.shape[2])
     for i in range(detections.shape[2]):
         confidence = detections[0, 0, i, 2]
         if confidence > conf_threshold:
@@ -54,14 +47,7 @@ while cv2.waitKey(1) != 27:
 
             # Save the face image in grayscale
             face_image = cv2.cvtColor(frame[y_left_bottom:y_right_top, x_left_bottom:x_right_top], cv2.COLOR_BGR2GRAY)
-            cv2.imwrite("dataset/face_" + str(ran) +'_'+ str(count) +".jpg", face_image)
-            count=count+1
-    t, _ = net.getPerfProfile()
-    print(t)
-    print(_)
-    label = 'Inference time: %.2f ms' % (t * 1000.0 / cv2.getTickFrequency())
-    cv2.putText(frame, label, (0, 15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0))
-    cv2.imshow(win_name, frame)
+        cv2.imshow(win_name, frame)
 
 source.release()
 cv2.destroyWindow(win_name)
