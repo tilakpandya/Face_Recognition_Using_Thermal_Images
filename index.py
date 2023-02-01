@@ -16,8 +16,8 @@ conf_threshold = 0.7
 # 27 is ESC key value
 while cv2.waitKey(1) != 27:
     has_frame, frame = source.read()
-    if not has_frame:
-        break
+    #if not has_frame:
+        #break
     # To flip the video image
     frame = cv2.flip(frame,1)
     frame_height = frame.shape[0]
@@ -48,8 +48,6 @@ while cv2.waitKey(1) != 27:
             cv2.putText(frame, label, (x_left_bottom, y_left_bottom),
                         cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0))
 
-            # Convert the face image in grayscale
-            face_image = cv2.cvtColor(frame[y_left_bottom:y_right_top, x_left_bottom:x_right_top], cv2.COLOR_BGR2GRAY)
         cv2.imshow(win_name, frame)
 
 source.release()
