@@ -1,10 +1,20 @@
 import cv2
 import os
 import random
+import sys
 
-source = cv2.VideoCapture(0)
+s = 0
+count = 0
+if len(sys.argv) > 1:
+    s = sys.argv[1]
+
+source = cv2.VideoCapture(s)
 win_name = 'Camera Preview'
 cv2.namedWindow(win_name, cv2.WINDOW_NORMAL)
+
+# Create a directory to save the dataset
+if not os.path.exists("dataset"):
+    os.makedirs("dataset")
 
 net = cv2.dnn.readNetFromCaffe("deploy.prototxt","res10_300x300_ssd_iter_140000_fp16.caffemodel")
 # Model parameters
@@ -13,11 +23,12 @@ in_height = 300
 mean = [104, 117, 123]
 # To check how much portion of the picture a face is covering
 conf_threshold = 0.7
+ran=random.randint(1,1000)
 # 27 is ESC key value
 while cv2.waitKey(1) != 27:
+    if count > 100:
+        break
     has_frame, frame = source.read()
-    #if not has_frame:
-        #break
     # To flip the video image
     frame = cv2.flip(frame,1)
     frame_height = frame.shape[0]
@@ -47,6 +58,12 @@ while cv2.waitKey(1) != 27:
                                 (255, 255, 255), cv2.FILLED)
             cv2.putText(frame, label, (x_left_bottom, y_left_bottom),
                         cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0))
+            
+            # Save the face image in grayscale
+            face_image = cv2.cvtColor(frame[y_left_bottom:y_right_top, x_left_bottom:x_right_top], cv2.COLOR_BGR2GRAY)
+            cv2.imwrite("dataset/face_" + str(ran) +"_" +str(count)+".jpg", face_image)
+            print(count)
+            count=count+1
 
         cv2.imshow(win_name, frame)
 
