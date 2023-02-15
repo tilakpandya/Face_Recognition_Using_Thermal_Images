@@ -60,9 +60,14 @@ while cv2.waitKey(1) != 27:
         # Save the face image in grayscale
         face_image = cv2.cvtColor(frame[y_left_bottom:y_right_top, x_left_bottom:x_right_top], cv2.COLOR_BGR2GRAY)
         cv2.imwrite("dataset/face_" + str(ran) +"_" +str(count)+".jpg", face_image)
+        
+        # Convert the face image to a thermal image using cv2.applyColorMap
+        thermal_image = cv2.applyColorMap(cv2.cvtColor(frame[y_left_bottom:y_right_top, x_left_bottom:x_right_top], cv2.COLOR_BGR2GRAY), cv2.COLORMAP_JET)
+        cv2.imwrite("dataset/thermal_face_" + str(ran) +"_" +str(count)+".jpg", thermal_image)
+        
         count=count+1
 
-    cv2.imshow(win_name, frame)
+        cv2.imshow(win_name, frame)
 
 source.release()
 cv2.destroyWindow(win_name)
