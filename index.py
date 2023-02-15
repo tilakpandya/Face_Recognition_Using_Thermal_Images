@@ -18,6 +18,20 @@ if not os.path.exists("dataset"):
 
 net = cv2.dnn.readNetFromCaffe("deploy.prototxt","res10_300x300_ssd_iter_140000_fp16.caffemodel")
 
+# Getting last file index
+
+folder_path = 'dataset' # replace with the path to the folder you want to check
+number =1
+
+if os.path.isdir(folder_path):
+    files = os.listdir(folder_path)
+    if files:
+        print(str(files[len(files)-1]))
+        parts = files[len(files)-1].split("_")
+
+        # extract the number from the second element
+        number += int(parts[2])
+
 ran=random.randint(1,1000)
 # 27 is ESC key value
 while cv2.waitKey(1) != 27:
@@ -57,17 +71,18 @@ while cv2.waitKey(1) != 27:
         cv2.putText(frame, "Confidence: %.4f" % confidence, (x_left_bottom, y_left_bottom),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0))
 
+        
         # Save the face image in grayscale
         face_image = cv2.cvtColor(frame[y_left_bottom:y_right_top, x_left_bottom:x_right_top], cv2.COLOR_BGR2GRAY)
-        cv2.imwrite("dataset/face_" + str(ran) +"_" +str(count)+".jpg", face_image)
+        cv2.imwrite("dataset/face_" + str(number) +"_" +str(count)+".jpg", face_image)
         
         # Convert the face image to a thermal image using cv2.applyColorMap
         thermal_image = cv2.applyColorMap(cv2.cvtColor(frame[y_left_bottom:y_right_top, x_left_bottom:x_right_top], cv2.COLOR_BGR2GRAY), cv2.COLORMAP_JET)
-        cv2.imwrite("dataset/thermal_face_" + str(ran) +"_" +str(count)+".jpg", thermal_image)
+        cv2.imwrite("dataset/thermal_face_" + str(number) +"_" +str(count)+".jpg", thermal_image)
         
         count=count+1
 
-        cv2.imshow(win_name, frame)
+    cv2.imshow(win_name, frame)
 
 source.release()
 cv2.destroyWindow(win_name)
