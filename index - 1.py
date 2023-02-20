@@ -3,7 +3,7 @@ import os
 import random
 import sys
 import numpy as np
-
+import pandas as pd
 s = 0
 count = 0
 if len(sys.argv) > 1:
@@ -21,7 +21,7 @@ folder_path = 'dataset' # replace with the path to the folder you want to check
 face_images = []
 face_labels = []
 number =1
-
+df = pd.read_csv("face_data.csv")
 for filename in os.listdir(folder_path):
     if filename.endswith(".jpg"):
         image = cv2.imread(os.path.join(folder_path, filename), cv2.IMREAD_GRAYSCALE)
@@ -82,8 +82,16 @@ while cv2.waitKey(1) != 27:
         # Recognize the face using the face recognition model
         label, confidence = face_recognizer.predict(face_image)
 
+        label_text = ""
+        if(confidence > 50):
+            label_text = "Unknown"
+        else:
+            result = df[df["Id"] == int(label)]["Full_Name"]
+            label_text = str(result[0]) if result.shape[0] > 0 else "Unknown"
+        
+
         # Draw a rectangle around the face and label it with the recognized name
-        label_text = "Unknown" if confidence > 50 else "Person " + str(label)
+        #label_text = "Unknown" if confidence > 50 else "Person " + str(label)
         cv2.rectangle(frame, (x_left_bottom, y_left_bottom), (x_right_top, y_right_top), (0, 255, 0))
         cv2.putText(frame, label_text, (x_left_bottom, y_left_bottom), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255))
 
