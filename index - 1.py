@@ -82,16 +82,12 @@ while cv2.waitKey(1) != 27:
         # Recognize the face using the face recognition model
         label, confidence = face_recognizer.predict(face_image)
 
-        label_text = ""
-        if(confidence > 50):
-            label_text = "Unknown"
-        else:
-            result = df[df["Id"] == int(label)]["Full_Name"]
-            label_text = str(result[0]) if result.shape[0] > 0 else "Unknown"
-        
-
-        # Draw a rectangle around the face and label it with the recognized name
-        #label_text = "Unknown" if confidence > 50 else "Person " + str(label)
+        label_text = "Unknown"
+        if(confidence < 50):
+            result = df[df["Id"] == int(label)]["Full_Name"].values
+            if len(result) > 0:
+                label_text = str(result[0])
+                    
         cv2.rectangle(frame, (x_left_bottom, y_left_bottom), (x_right_top, y_right_top), (0, 255, 0))
         cv2.putText(frame, label_text, (x_left_bottom, y_left_bottom), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255))
 

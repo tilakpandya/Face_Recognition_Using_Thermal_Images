@@ -53,8 +53,8 @@ class dataset:
         return result     
 
 # Testing ClassNa
-sd = dataset()
-print(sd.getName(200535046))
+#sd = dataset()
+#print(sd.getName(200535046))
 #sd.add()
 
 #class register : 
