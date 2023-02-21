@@ -91,7 +91,7 @@ while cv2.waitKey(1) != 27:
         cv2.rectangle(frame, (x_left_bottom, y_left_bottom), (x_right_top, y_right_top), (0, 255, 0))
         cv2.putText(frame, label_text, (x_left_bottom, y_left_bottom), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255))
 
-    cv2.imshow(win_name, frame)
+        cv2.imshow(win_name, frame)
 
 source.release()
 cv2.destroyWindow(win_name)
