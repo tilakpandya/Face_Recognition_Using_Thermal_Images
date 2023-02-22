@@ -28,10 +28,8 @@ for filename in os.listdir(folder_path):
         face_images.append(image)
         names = filename.split("_")
         if "thermal" in names:
-            print(names)
             name = int(names[2])
         else:
-            print(names)
             name = int(names[1])
         face_label = name
         face_labels.append(face_label)
@@ -47,7 +45,6 @@ cv2.namedWindow(win_name, cv2.WINDOW_NORMAL)
 if os.path.isdir(folder_path):
     files = os.listdir(folder_path)
     if files:
-        print(str(files[len(files)-1]))
         parts = files[len(files)-1].split("_")
 
         # extract the number from the second element
