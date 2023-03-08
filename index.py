@@ -14,7 +14,7 @@ if len(sys.argv) > 1:
     s = sys.argv[1]
 
 url = "rtsp://admin:Admin12345@192.168.1.142/Streaming/channels/1"
-source = cv2.VideoCapture(url)
+source = cv2.VideoCapture(0)
 win_name = 'Camera Preview'
 cv2.namedWindow(win_name, cv2.WINDOW_NORMAL)
 
@@ -78,16 +78,13 @@ while cv2.waitKey(1) != 27:
                     cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0))
 
         
-        # Save the face image in grayscale
-        #face_image = cv2.cvtColor(frame[y_left_bottom:y_right_top, x_left_bottom:x_right_top], cv2.COLOR_BGR2GRAY)
-        #cv2.imwrite("dataset/face_" + str(dataset.id) +"_" +str(count)+".jpg", face_image)
-        
         # Convert the face image to a thermal image using cv2.applyColorMap
-        thermal_image = cv2.applyColorMap(cv2.cvtColor(frame[y_left_bottom:y_right_top, x_left_bottom:x_right_top], cv2.COLOR_BGR2GRAY), cv2.COLORMAP_JET)
-        #cv2.imwrite("dataset/thermal_face_" + str(dataset.id) +"_" +str(count)+".jpg", thermal_image)
-        
-        rgb_image = frame[y_left_bottom:y_right_top, x_left_bottom:x_right_top] #cv2.imread("dataset/face_" + str(dataset.id) + "_" + str(count) + ".jpg")
-        #thermal_image = cv2.imread("dataset/thermal_face_" + str(dataset.id) + "_" + str(count) + ".jpg")
+        face_image = frame[y_left_bottom:y_right_top, x_left_bottom:x_right_top]
+        if face_image.size != 0:
+            thermal_image = cv2.applyColorMap(cv2.cvtColor(face_image, cv2.COLOR_BGR2GRAY), cv2.COLORMAP_JET)
+        else:
+            continue        
+        rgb_image = frame[y_left_bottom:y_right_top, x_left_bottom:x_right_top] 
 
         # Resize the images to the same size
         rgb_image = cv2.resize(rgb_image, thermal_image.shape[:2][::-1])
