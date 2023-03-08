@@ -2,10 +2,10 @@ import cv2
 import os
 import random
 import sys
-import common
+import helper
 
 
-dataset = common.dataset()
+dataset = helper.dataset()
 dataset.add()
 
 s = 0
@@ -13,7 +13,8 @@ count = 0
 if len(sys.argv) > 1:
     s = sys.argv[1]
 
-source = cv2.VideoCapture(s)
+url = "rtsp://admin:Admin12345@192.168.1.142/Streaming/channels/1"
+source = cv2.VideoCapture(url)
 win_name = 'Camera Preview'
 cv2.namedWindow(win_name, cv2.WINDOW_NORMAL)
 
@@ -78,12 +79,29 @@ while cv2.waitKey(1) != 27:
 
         
         # Save the face image in grayscale
-        face_image = cv2.cvtColor(frame[y_left_bottom:y_right_top, x_left_bottom:x_right_top], cv2.COLOR_BGR2GRAY)
-        cv2.imwrite("dataset/face_" + str(dataset.id) +"_" +str(count)+".jpg", face_image)
+        #face_image = cv2.cvtColor(frame[y_left_bottom:y_right_top, x_left_bottom:x_right_top], cv2.COLOR_BGR2GRAY)
+        #cv2.imwrite("dataset/face_" + str(dataset.id) +"_" +str(count)+".jpg", face_image)
         
         # Convert the face image to a thermal image using cv2.applyColorMap
         thermal_image = cv2.applyColorMap(cv2.cvtColor(frame[y_left_bottom:y_right_top, x_left_bottom:x_right_top], cv2.COLOR_BGR2GRAY), cv2.COLORMAP_JET)
-        cv2.imwrite("dataset/thermal_face_" + str(dataset.id) +"_" +str(count)+".jpg", thermal_image)
+        #cv2.imwrite("dataset/thermal_face_" + str(dataset.id) +"_" +str(count)+".jpg", thermal_image)
+        
+        rgb_image = frame[y_left_bottom:y_right_top, x_left_bottom:x_right_top] #cv2.imread("dataset/face_" + str(dataset.id) + "_" + str(count) + ".jpg")
+        #thermal_image = cv2.imread("dataset/thermal_face_" + str(dataset.id) + "_" + str(count) + ".jpg")
+
+        # Resize the images to the same size
+        rgb_image = cv2.resize(rgb_image, thermal_image.shape[:2][::-1])
+
+        # Convert the thermal image to grayscale and apply a color map
+        thermal_gray = cv2.cvtColor(thermal_image, cv2.COLOR_BGR2GRAY)
+        thermal_color = cv2.applyColorMap(thermal_gray, cv2.COLORMAP_JET)
+
+        # Blend the RGB and thermal images
+        blended = cv2.addWeighted(rgb_image, 0.5, thermal_color, 0.5, 0)
+
+        # Save the blended image
+        cv2.imwrite("dataset/fused_face_" + str(dataset.id) + "_" + str(count) + ".jpg", blended)
+
         
         count=count+1
 
