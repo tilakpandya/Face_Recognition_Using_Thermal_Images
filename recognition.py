@@ -18,14 +18,13 @@ net = cv2.dnn.readNetFromCaffe("deploy.prototxt","res10_300x300_ssd_iter_140000_
 
 # Load the face recognition model
 face_recognizer = cv2.face.LBPHFaceRecognizer_create()
-#face_recognizer.read("face_recognition_model.xml")
 
 # Getting last file index
-
 face_images = []
 face_labels = []
 number =1
 df = pd.read_csv("face_data.csv")
+
 for filename in os.listdir(folder_path):
     if filename.endswith(".jpg"):
         image = cv2.imread(os.path.join(folder_path, filename), cv2.IMREAD_GRAYSCALE)
