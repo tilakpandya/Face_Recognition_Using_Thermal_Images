@@ -1,22 +1,33 @@
 import cv2
 import os
-import random
-import sys
 import helper
-
+import numpy as np
+from PIL import ImageChops
 
 dataset = helper.dataset()
 dataset.add()
 
-s = 0
+# Getting last file index
+number =1
 count = 0
-if len(sys.argv) > 1:
-    s = sys.argv[1]
-
+imagesList = []
 url = "rtsp://admin:Admin12345@192.168.1.142/Streaming/channels/2"
 source = cv2.VideoCapture(url)
 win_name = 'Camera Preview'
 cv2.namedWindow(win_name, cv2.WINDOW_NORMAL)
+
+def isImageExist(images, thermal_gray):
+    if(len(images) == 0):
+        return True
+    for filename in images:
+        image = cv2.imread(os.path.join("dataset", filename), cv2.IMREAD_GRAYSCALE)
+        diff = ImageChops.difference(image, thermal_gray)
+        pixels_diff = diff.getdata().count((255, 255, 255))
+        total_pixels = image.size[0] * image.size[1]
+        print(pixels_diff / total_pixels)
+        if np.array_equal(cv2.equalizeHist(thermal_gray), cv2.equalizeHist(image)):
+            return False
+    return True
 
 # Create a directory to save the dataset
 if not os.path.exists("dataset"):
@@ -24,21 +35,6 @@ if not os.path.exists("dataset"):
 
 net = cv2.dnn.readNetFromCaffe("deploy.prototxt","res10_300x300_ssd_iter_140000_fp16.caffemodel")
 
-# Getting last file index
-
-folder_path = 'dataset' # replace with the path to the folder you want to check
-number =1
-
-if os.path.isdir(folder_path):
-    files = os.listdir(folder_path)
-    if files:
-        print(str(files[len(files)-1]))
-        parts = files[len(files)-1].split("_")
-
-        # extract the number from the second element
-        number += int(parts[2])
-
-ran=random.randint(1,1000)
 # 27 is ESC key value
 while cv2.waitKey(1) != 27:
     if count > 100:
@@ -93,15 +89,15 @@ while cv2.waitKey(1) != 27:
             # Convert the thermal image to grayscale and apply a color map
             thermal_gray = cv2.cvtColor(thermal_image, cv2.COLOR_BGR2GRAY)
             thermal_color = cv2.applyColorMap(thermal_gray, cv2.COLORMAP_JET)
-
-            # Blend the RGB and thermal images
-            blended = cv2.addWeighted(rgb_image, 0.5, thermal_color, 0.5, 0)
-
-            # Save the blended image
-            cv2.imwrite("dataset/fused_face_" + str(dataset.id) + "_" + str(count) + ".jpg", blended)
-
-            
-            count=count+1
+        
+            if(isImageExist(imagesList,thermal_gray)):
+                imageName = "fused_face_" + str(dataset.id) + "_" + str(count) + ".jpg"
+                imagesList.append(imageName)
+                # Blend the RGB and thermal images
+                blended = cv2.addWeighted(rgb_image, 0.5, thermal_color, 0.5, 0)
+                # Save the blended image
+                cv2.imwrite("dataset/"+imageName, blended)
+                count=count+1
 
         cv2.imshow(win_name, frame)
 

@@ -3,10 +3,11 @@ import os
 import sys
 import numpy as np
 import pandas as pd
+from PIL import Image
+
 s = 0
 count = 0
 folder_path = 'dataset' # replace with the path to the folder you want to check
-
 if len(sys.argv) > 1:
     s = sys.argv[1]
 
@@ -36,12 +37,10 @@ for filename in os.listdir(folder_path):
         
 # Create the face recognition model
 face_recognizer.train(face_images, np.array(face_labels))
-
 url = "rtsp://admin:Admin12345@192.168.1.142/Streaming/channels/2"
 source = cv2.VideoCapture(url)
 win_name = 'Camera Preview'
 cv2.namedWindow(win_name, cv2.WINDOW_NORMAL)
-
 if os.path.isdir(folder_path):
     files = os.listdir(folder_path)
     if files:
@@ -99,7 +98,6 @@ while cv2.waitKey(1) != 27:
                     label_text = str(result[0])
             cv2.rectangle(frame, (x_left_bottom, y_left_bottom), (x_right_top, y_right_top), (0, 255, 0))
             cv2.putText(frame, label_text, (x_left_bottom, y_left_bottom), cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 0, 255),2,cv2.LINE_AA)
-
         cv2.imshow(win_name, frame)
     else:
         break
