@@ -4,16 +4,14 @@ import sys
 import numpy as np
 import pandas as pd
 from PIL import Image
+import helper
+
 
 s = 0
 count = 0
 folder_path = 'dataset' # replace with the path to the folder you want to check
 if len(sys.argv) > 1:
     s = sys.argv[1]
-
-# Create a directory to save the dataset
-if not os.path.exists(folder_path):
-    os.makedirs(folder_path)
 
 net = cv2.dnn.readNetFromCaffe("deploy.prototxt","res10_300x300_ssd_iter_140000_fp16.caffemodel")
 
@@ -37,9 +35,8 @@ for filename in os.listdir(folder_path):
         
 # Create the face recognition model
 face_recognizer.train(face_images, np.array(face_labels))
-url = "rtsp://admin:Admin12345@192.168.1.142/Streaming/channels/2"
-source = cv2.VideoCapture(url)
 win_name = 'Camera Preview'
+source = helper.cameraSource(win_name)
 cv2.namedWindow(win_name, cv2.WINDOW_NORMAL)
 if os.path.isdir(folder_path):
     files = os.listdir(folder_path)
@@ -55,8 +52,6 @@ while cv2.waitKey(1) != 27:
     if has_frame is True:    
         # To flip the video image
         frame = cv2.flip(frame,1)
-        frame_height = frame.shape[0]
-        frame_width = frame.shape[1]
 
         # Detect faces in the current frame
         blob = cv2.dnn.blobFromImage(frame, 1.0, (300, 300), [104, 117, 123], swapRB = False, crop = False)
@@ -67,11 +62,8 @@ while cv2.waitKey(1) != 27:
 
             if confidence < 0.7:
                 continue
-            x_left_bottom = int(detections[0, 0, i, 3] * frame_width)
-            y_left_bottom = int(detections[0, 0, i, 4] * frame_height)
-            x_right_top = int(detections[0, 0, i, 5] * frame_width)
-            y_right_top = int(detections[0, 0, i, 6] * frame_height)
 
+            x_left_bottom, y_left_bottom, x_right_top, y_right_top = helper.getCordinates(i,detections, frame)
             # Convert the face image to a thermal image using cv2.applyColorMap
             thermal_image = cv2.applyColorMap(cv2.cvtColor(frame[y_left_bottom:y_right_top, x_left_bottom:x_right_top], cv2.COLOR_BGR2GRAY), cv2.COLORMAP_JET)
             

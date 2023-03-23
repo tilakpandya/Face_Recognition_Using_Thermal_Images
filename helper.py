@@ -1,10 +1,12 @@
 import csv
 import os
 import pandas as pd
-import warnings 
+import warnings
+import cv2
 warnings.filterwarnings('ignore')
 
 FILE_NAME = "face_data.csv"
+frame_height = frame_width = 0
 class dataset:
     def __init__(self):
         self.name = input("Enter Your Name : ")
@@ -52,17 +54,35 @@ class dataset:
     def getName(self, label):
         df = pd.read_csv(FILE_NAME)
         result = df[df["Id"] == int(label)].Full_Name
-        return result     
+        return result
 
-# Testing ClassNa
-#sd = dataset()
-#print(sd.getName(200535046))
-#sd.add()
+def cameraSource(winName):
+    url = "rtsp://admin:Admin12345@192.168.1.142/Streaming/channels/2"
+    source = cv2.VideoCapture(0)
+    cv2.namedWindow(winName, cv2.WINDOW_NORMAL)
+    return source
 
-#class register : 
-#    def __init__(self):
-#        self.name = input("Enter your name :")
-#        self.id = input("Enter your Id :")
-        
-#    def saveImages(self):
+def isImageExist(images, thermal_gray):
+    return True
+    if(len(images) == 0):
+        return True
+    for filename in images:
+        image = cv2.imread(os.path.join("dataset", filename), cv2.IMREAD_GRAYSCALE)
+        diff = ImageChops.difference(image, thermal_gray)
+        pixels_diff = diff.getdata().count((255, 255, 255))
+        total_pixels = image.size[0] * image.size[1]
+        print(pixels_diff / total_pixels)
+        if np.array_equal(cv2.equalizeHist(thermal_gray), cv2.equalizeHist(image)):
+            return False
+    return True
+
+def getCordinates(index,detections, frame):
+    frame_height = frame.shape[0]
+    frame_width = frame.shape[1]
+    x_left_bottom = int(detections[0, 0, index, 3] * frame_width)
+    y_left_bottom = int(detections[0, 0, index, 4] * frame_height)
+    x_right_top = int(detections[0, 0, index, 5] * frame_width)
+    y_right_top = int(detections[0, 0, index, 6] * frame_height)
+
+    return x_left_bottom, y_left_bottom, x_right_top, y_right_top
 

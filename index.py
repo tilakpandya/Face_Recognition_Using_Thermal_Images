@@ -11,23 +11,9 @@ dataset.add()
 number =1
 count = 0
 imagesList = []
-url = "rtsp://admin:Admin12345@192.168.1.142/Streaming/channels/2"
-source = cv2.VideoCapture(url)
 win_name = 'Camera Preview'
-cv2.namedWindow(win_name, cv2.WINDOW_NORMAL)
+source = helper.cameraSource(win_name)
 
-def isImageExist(images, thermal_gray):
-    if(len(images) == 0):
-        return True
-    for filename in images:
-        image = cv2.imread(os.path.join("dataset", filename), cv2.IMREAD_GRAYSCALE)
-        diff = ImageChops.difference(image, thermal_gray)
-        pixels_diff = diff.getdata().count((255, 255, 255))
-        total_pixels = image.size[0] * image.size[1]
-        print(pixels_diff / total_pixels)
-        if np.array_equal(cv2.equalizeHist(thermal_gray), cv2.equalizeHist(image)):
-            return False
-    return True
 
 # Create a directory to save the dataset
 if not os.path.exists("dataset"):
@@ -43,9 +29,6 @@ while cv2.waitKey(1) != 27:
     if has_frame is True:
         # To flip the video image
         frame = cv2.flip(frame,1)
-        frame_height = frame.shape[0]
-        frame_width = frame.shape[1]
-
         # Create a 4D blob from a frame. it converts image to numeric multidimentional array.
         blob = cv2.dnn.blobFromImage(frame, 1.0, (300, 300), [104, 117, 123], swapRB = False, crop = False)
         # Run a model
@@ -57,10 +40,8 @@ while cv2.waitKey(1) != 27:
             #check the threshold of confidence
             if confidence < 0.7:
                 continue
-            x_left_bottom = int(detections[0, 0, i, 3] * frame_width)
-            y_left_bottom = int(detections[0, 0, i, 4] * frame_height)
-            x_right_top = int(detections[0, 0, i, 5] * frame_width)
-            y_right_top = int(detections[0, 0, i, 6] * frame_height)
+
+            x_left_bottom, y_left_bottom, x_right_top, y_right_top = helper.getCordinates(i,detections, frame)
 
             # A rectangle for the face
             cv2.rectangle(frame, (x_left_bottom, y_left_bottom), (x_right_top, y_right_top), (0, 255, 0))
@@ -90,7 +71,7 @@ while cv2.waitKey(1) != 27:
             thermal_gray = cv2.cvtColor(thermal_image, cv2.COLOR_BGR2GRAY)
             thermal_color = cv2.applyColorMap(thermal_gray, cv2.COLORMAP_JET)
         
-            if(isImageExist(imagesList,thermal_gray)):
+            if(helper.isImageExist(imagesList,thermal_gray)):
                 imageName = "fused_face_" + str(dataset.id) + "_" + str(count) + ".jpg"
                 imagesList.append(imageName)
                 # Blend the RGB and thermal images
