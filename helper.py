@@ -67,11 +67,6 @@ def isImageExist(images, thermal_gray):
     if(len(images) == 0):
         return True
     for filename in images:
-        image = cv2.imread(os.path.join("dataset", filename), cv2.IMREAD_GRAYSCALE)
-        diff = ImageChops.difference(image, thermal_gray)
-        pixels_diff = diff.getdata().count((255, 255, 255))
-        total_pixels = image.size[0] * image.size[1]
-        print(pixels_diff / total_pixels)
         if np.array_equal(cv2.equalizeHist(thermal_gray), cv2.equalizeHist(image)):
             return False
     return True
