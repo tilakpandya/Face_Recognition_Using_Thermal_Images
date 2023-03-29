@@ -28,7 +28,7 @@ def exit():
 menu = Menu(root)
 root.config(menu=menu)
 
-but1=Button(frame,padx=5,pady=5,width=55,bg='white',fg='black',relief=GROOVE,command=registration,text='new registration',font=('helvetica 15 bold'))
+but1=Button(frame,padx=5,pady=5,width=55,bg='white',fg='black',relief=GROOVE,command=registration,text='New Registration',font=('helvetica 15 bold'))
 but1.place(x=5,y=100)
 
 but3=Button(frame,padx=5,pady=5,width=55,bg='white',fg='black',relief=GROOVE,command=recognition,text='Recognize',font=('helvetica 15 bold'))

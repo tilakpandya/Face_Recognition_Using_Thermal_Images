@@ -2,6 +2,7 @@ import csv
 import os
 import pandas as pd
 import warnings
+import numpy as np
 import cv2
 warnings.filterwarnings('ignore')
 
@@ -47,8 +48,8 @@ class dataset:
         while True : 
             if int(self.id) in df["Id"].values:
                 self.id = input("Entered Id has been used before, please enter your unique Id : ")
-            #elif len(self.id) != 9:
-                #self.id = input("Entered Id Should be 9 digit number, please enter valid student Id : ")
+            elif len(self.id) != 9:
+                self.id = input("Entered Id Should be 9 digit number, please enter valid student Id : ")
             else:
                 break
     def getName(self, label):

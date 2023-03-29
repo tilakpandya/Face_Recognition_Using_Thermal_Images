@@ -1,8 +1,6 @@
 import cv2
 import os
 import helper
-import numpy as np
-from PIL import ImageChops
 
 dataset = helper.dataset()
 dataset.add()
