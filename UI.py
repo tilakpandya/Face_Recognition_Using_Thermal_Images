@@ -1,8 +1,12 @@
 from tkinter import *
 import os
+from tkinter import messagebox
+import helper
 
-#os.system("dem.gif")
-root=Tk()
+
+root= Tk()
+os.system("splash_screen.py")
+
 root.geometry('700x570')
 frame = Frame(root, relief=RIDGE, borderwidth=2)
 frame.pack(fill=BOTH,expand=1)
@@ -20,6 +24,14 @@ def registration():
 
 def recognition():
     exec(open('recognition.py').read())
+    
+def history():
+    filename = "History.txt"
+    if os.path.exists(filename):
+        # Open the PDF file in the default web browser
+        helper.getHistory()
+    else:
+        messagebox.showerror("Error", f"The file {filename} does not exist.")
 
 def exit():
     root.destroy()
@@ -34,7 +46,7 @@ but1.place(x=5,y=100)
 but3=Button(frame,padx=5,pady=5,width=55,bg='white',fg='black',relief=GROOVE,command=recognition,text='Recognize',font=('helvetica 15 bold'))
 but3.place(x=5,y=200)
 
-but3=Button(frame,padx=5,pady=5,width=55,bg='white',fg='black',relief=GROOVE,command=recognition,text='History',font=('helvetica 15 bold'))
+but3=Button(frame,padx=5,pady=5,width=55,bg='white',fg='black',relief=GROOVE,command=history,text='History',font=('helvetica 15 bold'))
 but3.place(x=5,y=300)
 
 but5=Button(frame,padx=5,pady=5,width=5,bg='white',fg='black',relief=GROOVE,text='EXIT',command=exit,font=('helvetica 15 bold'))

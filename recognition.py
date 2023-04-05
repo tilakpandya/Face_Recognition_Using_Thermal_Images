@@ -6,9 +6,13 @@ import pandas as pd
 from PIL import Image
 import helper
 
-
+# Getting last file index
+face_images = []
+face_labels = []
+number = 1
 s = 0
 count = 0
+
 folder_path = 'dataset' # replace with the path to the folder you want to check
 if len(sys.argv) > 1:
     s = sys.argv[1]
@@ -18,10 +22,9 @@ net = cv2.dnn.readNetFromCaffe("deploy.prototxt","res10_300x300_ssd_iter_140000_
 # Load the face recognition model
 face_recognizer = cv2.face.LBPHFaceRecognizer_create()
 
-# Getting last file index
-face_images = []
-face_labels = []
-number =1
+#create hisory
+helper.setHistory("Recognition")
+
 df = pd.read_csv("face_data.csv")
 
 for filename in os.listdir(folder_path):
@@ -93,6 +96,7 @@ while cv2.waitKey(1) != 27:
         cv2.imshow(win_name, frame)
     else:
         break
+
 
 source.release()
 cv2.destroyWindow(win_name)

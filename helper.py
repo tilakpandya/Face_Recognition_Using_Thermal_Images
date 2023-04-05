@@ -4,6 +4,10 @@ import pandas as pd
 import warnings
 import numpy as np
 import cv2
+import datetime
+import aspose.words as aw
+import webbrowser
+
 warnings.filterwarnings('ignore')
 
 FILE_NAME = "face_data.csv"
@@ -64,10 +68,10 @@ def cameraSource(winName):
     return source
 
 def isImageExist(images, thermal_gray):
-    return True
     if(len(images) == 0):
         return True
     for filename in images:
+        image = cv2.imread(os.path.join("dataset", filename), cv2.IMREAD_GRAYSCALE)
         if np.array_equal(cv2.equalizeHist(thermal_gray), cv2.equalizeHist(image)):
             return False
     return True
@@ -82,3 +86,23 @@ def getCordinates(index,detections, frame):
 
     return x_left_bottom, y_left_bottom, x_right_top, y_right_top
 
+def setHistory(source):
+    current_datetime = datetime.datetime.now()
+    formatted_datetime = current_datetime.strftime("%Y-%m-%d %H:%M:%S")
+    
+    # Open a file for appending
+    file = open("History.txt", "a")
+
+    # Append some text to the file
+    file.write('\n'+formatted_datetime+"("+source+")")
+
+    # Close the file
+    file.close()
+    
+def getHistory():
+    # load TXT document
+    doc = aw.Document("History.txt")
+
+    # save TXT as PDF file
+    doc.save("History.pdf", aw.SaveFormat.PDF)
+    webbrowser.open_new_tab("History.pdf")
