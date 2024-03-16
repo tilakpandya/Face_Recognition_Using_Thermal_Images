@@ -8,3 +8,15 @@ CRI stands for Color Rendering Index and is nothing but a specification of camer
 CRI AI Thermal camera is used to develop this project.
 
 
+# Glimpse Of The Work
+<table>
+  <tr>
+    <td>
+      <img src="https://github.com/tilakpandya/Face_Recognition_Using_Thermal_Images/blob/master/Screenshot%20(278).png" height=350 width=600>
+    </td>
+    <td>
+      <img src="https://github.com/tilakpandya/Face_Recognition_Using_Thermal_Images/blob/master/Screenshot%20(277).png" height=350 width=600>
+    </td>
+  </tr>
+</table>
+
